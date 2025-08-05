@@ -11,23 +11,30 @@ const PORT = 5000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public'))); // Serve frontend from /public
 
 // Google Maps Key endpoint
 app.get('/api/maps-key', (req, res) => {
-  res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
+  const key = process.env.GOOGLE_MAPS_API_KEY;
+  if (!key) {
+    return res.status(500).json({ error: 'Google Maps API key not configured.' });
+  }
+  res.json({ key });
 });
 
-// OpenAI configuration
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// OpenAI config
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Property advice route
+// Advice Endpoint
 app.post('/advice', async (req, res) => {
   const { address, action } = req.body;
 
-  const prompt = `Give a professional real estate advisory report for this address: "${address}".
+  if (!address || !action) {
+    return res.status(400).json({ response: "Address and action are required." });
+  }
+
+  const prompt = `
+Give a professional real estate advisory report for this address: "${address}".
 Purpose: ${action.toUpperCase()}
 
 Include:
@@ -47,11 +54,18 @@ Include:
     res.json({ response: completion.choices[0].message.content });
   } catch (error) {
     console.error("OpenAI error:", error.message);
-    res.status(500).json({ response: "Something went wrong." });
+    if (error.message.includes("quota")) {
+      return res.status(429).json({ response: "OpenAI quota exceeded or billing issue." });
+    }
+    res.status(500).json({ response: "Something went wrong with the AI request." });
   }
 });
 
-// Start the server
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+  
+// Start Server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });

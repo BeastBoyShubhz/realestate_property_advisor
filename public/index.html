@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>RealEstate Property Advisor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>RealEstate Property Advisor</h1>
+    
     <form id="property-form">
       <label for="address">Enter Property Address:</label>
-      <input id="address" type="text" placeholder="Start typing..." autocomplete="off" required>
+      <input id="address" type="text" placeholder="Start typing address..." autocomplete="off" required>
 
       <label for="action">Select Action:</label>
       <select id="action">
@@ -32,13 +34,30 @@
       </table>
 
       <div id="history-chart" class="chart-placeholder">
-        <!-- Future: Chart.js or Google Charts -->
         <p>Historical trends will appear here...</p>
       </div>
     </div>
   </div>
 
   <script src="script.js"></script>
-  <script src="/google-maps.js"></script>
+
+  <script>
+    // Load Google Maps API dynamically with your local server key
+    fetch('/api/maps-key')
+      .then(res => res.json())
+      .then(data => {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&libraries=places&callback=initAutocomplete`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      });
+
+    function initAutocomplete() {
+      const input = document.getElementById('address');
+      if (!input) return;
+      new google.maps.places.Autocomplete(input);
+    }
+  </script>
 </body>
 </html>
