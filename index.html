@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RealEstate Property Advisor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>RealEstate Property Advisor</h1>
+    <form id="property-form">
+      <label for="address">Enter Property Address:</label>
+      <input id="address" type="text" placeholder="Start typing..." autocomplete="off" required>
+
+      <label for="action">Select Action:</label>
+      <select id="action">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+        <option value="rent">Rent</option>
+      </select>
+
+      <button type="submit">Get Property Advice</button>
+    </form>
+
+    <div class="result">
+      <h2>Property Information</h2>
+      <table>
+        <tr><td>Price:</td><td id="price">$---</td></tr>
+        <tr><td>Built Year:</td><td id="builtYear">---</td></tr>
+        <tr><td>Area Rating:</td><td id="rating">---</td></tr>
+        <tr><td>Recommended Action:</td><td id="advice">---</td></tr>
+      </table>
+
+      <div id="history-chart" class="chart-placeholder">
+        <!-- Future: Chart.js or Google Charts -->
+        <p>Historical trends will appear here...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="/google-maps.js"></script>
+</body>
+</html>
