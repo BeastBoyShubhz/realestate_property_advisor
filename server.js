@@ -2,32 +2,28 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 const OpenAI = require('openai');
 
 const app = express();
+const PORT = 5000;
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-require('dotenv').config();
-const express = require('express');
-const app = express();
-const path = require('path');
-
 app.use(express.static(path.join(__dirname)));
 
+// Google Maps Key endpoint
 app.get('/api/maps-key', (req, res) => {
   res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
 });
 
-app.listen(5000, () => {
-  console.log('Server running at http://localhost:5000');
+// OpenAI configuration
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-
+// Property advice route
 app.post('/advice', async (req, res) => {
   const { address, action } = req.body;
 
@@ -55,6 +51,7 @@ Include:
   }
 });
 
-app.listen(5000, () => {
-  console.log('Server running at http://localhost:5000');
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
